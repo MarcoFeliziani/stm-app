@@ -10,6 +10,9 @@ export default function Summary() {
 
   const match = { player, opponent, pointsHistory };
 
+  const getMentalAverage = useMatchStore(s => s.getMentalAverage);
+  const avg = getMentalAverage();
+
   const total = pointsHistory.length;
 
   if (total === 0) {
@@ -96,6 +99,29 @@ export default function Summary() {
       <p>Self-talk positivo: {stats.self_pos} ({perc(stats.self_pos)}%)</p>
       <p>Self-talk negativo: {stats.self_neg} ({perc(stats.self_neg)}%)</p>
       <p>Sfogo: {stats.sfogo} ({perc(stats.sfogo)}%)</p>
+
+      <hr />
+
+      <h3>🧠 Profilo mentale medio</h3>
+
+      <p>Aggressività: {avg.aggressivita?.toFixed(2)}</p>
+      <p>Concentrazione: {avg.concentrazione?.toFixed(2)}</p>
+      <p>Leadership: {avg.leadership?.toFixed(2)}</p>
+      <p>Gioia: {avg.gioia?.toFixed(2)}</p>
+      <p>Determinazione: {avg.determinazione?.toFixed(2)}</p>
+
+      <p>Ansia: {avg.ansia?.toFixed(2)}</p>
+      <p>Paura: {avg.paura?.toFixed(2)}</p>
+      <p>Tristezza: {avg.tristezza?.toFixed(2)}</p>
+      <p>Rabbia: {avg.rabbia?.toFixed(2)}</p>
+      <p>Frustrazione: {avg.frustrazione?.toFixed(2)}</p>
+
+      <p>Stratega: {avg.stratega?.toFixed(2)}</p>
+      <p>Rigido: {avg.rigido?.toFixed(2)}</p>
+      <p>Orale: {avg.orale?.toFixed(2)}</p>
+      <p>Masochista: {avg.masochista?.toFixed(2)}</p>
+      <p>Mentale: {avg.mentale?.toFixed(2)}</p>
+      <p>Resilienza: {avg.resilienza?.toFixed(2)}</p>
 
       <hr />
 
