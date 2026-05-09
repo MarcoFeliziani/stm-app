@@ -64,7 +64,7 @@ export default function Match() {
     return (
       <button
         className={color}
-        style={{ opacity: active ? 1 : 0.4 }}
+        style={{ opacity: active ? 1 : 0.5 }}
         onClick={() => toggle(cat, value)}
       >
         {label}

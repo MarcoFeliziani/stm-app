@@ -29,10 +29,12 @@ button {
 
 .btn-green {
   background: #22c55e;
+  color: white;
 }
 
 .btn-red {
   background: #ef4444;
+  color: white;
 }
 
 .grid {
