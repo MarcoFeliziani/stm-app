@@ -37,25 +37,24 @@ export default function Match() {
     });
   };
 
-  const saveDetailedPoint = () => {
-    if (!data.outcome) {
-      alert("Seleziona esito");
-      return;
-    }
+  const saveDetailedPoint = (outcome) => {
+    const pointData = {
+      ...data,
+      outcome
+    };
 
-    addPoint(data);
+    addPoint(pointData);
 
-    // 💥 feedback rapido
+    // vibrazione
     navigator.vibrate?.(50);
 
-    // 🔥 reset completo
+    // reset
     setData({
       pre: [],
       during: [],
       post: [],
       outcome: null
     });
-
   };
 
   const Button = ({ label, value, cat, color }) => {
@@ -116,26 +115,19 @@ export default function Match() {
         </div>
 
         <h3>🎯 Esito</h3>
+
         <button
           className="btn-green"
-          style={{ opacity: data.outcome === "player" ? 1 : 0.4 }}
-          onClick={() => setData({ ...data, outcome: "player" })}
+          onClick={() => saveDetailedPoint("player")}
         >
           ✅ Giocatore
         </button>
 
         <button
           className="btn-red"
-          style={{ opacity: data.outcome === "opponent" ? 1 : 0.4 }}
-          onClick={() => setData({ ...data, outcome: "opponent" })}
+          onClick={() => saveDetailedPoint("opponent")}
         >
           ❌ Avversario
-        </button>
-
-        <hr />
-
-        <button className="btn-primary" onClick={saveDetailedPoint}>
-          💾 Salva Punto
         </button>
 
         <button onClick={undoLastPoint} style={{ marginLeft: 10 }}>
