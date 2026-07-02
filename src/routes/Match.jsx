@@ -5,8 +5,9 @@ import MentalChart from "../components/MentalChart";
 import StatsLive from "../components/StatsLive";
 
 export default function Match() {
-  const { player, opponent, score, addPoint, canUndo, undoLastPoint } = useMatchStore();
+  const { player, opponent, score, addPoint, canUndo, undoLastPoint, getFormattedPoints } = useMatchStore();
   const navigate = useNavigate();
+  
 
   const [data, setData] = useState({
     pre: [],
@@ -14,16 +15,6 @@ export default function Match() {
     post: [],
     outcome: null
   });
-
-  const formatPoints = (p1, p2) => {
-    if (p1 >= 3 && p2 >= 3) {
-      if (p1 === p2) return "40-40";
-      if (p1 > p2) return "AD-40";
-      return "40-AD";
-    }
-    const tennis = [0, 15, 30, 40];
-    return `${tennis[p1]} - ${tennis[p2]}`;
-  };
 
   const toggle = (category, value) => {
     setData((prev) => {
@@ -39,7 +30,9 @@ export default function Match() {
 
   const saveDetailedPoint = (outcome) => {
     const pointData = {
-      ...data,
+      pre: data.pre,
+      during: data.during,
+      post: data.post,
       outcome
     };
 
@@ -77,7 +70,14 @@ export default function Match() {
 
       <p>Set: {score.sets[0]} - {score.sets[1]}</p>
       <p>Game: {score.games[0]} - {score.games[1]}</p>
-      <p>Punti: {formatPoints(score.points[0], score.points[1])}</p>
+
+      {score.tieBreak && (
+        <div style={{ fontWeight: "bold", color: "orange" }}>
+          🔥 TIE-BREAK
+        </div>
+      )}
+
+      <p>Punti: {getFormattedPoints()}</p>
 
       <StatsLive />
       <MentalChart />

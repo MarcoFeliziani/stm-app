@@ -11,7 +11,8 @@ export const useMatchStore = create((set, get) => ({
   score: {
     sets: [0, 0],
     games: [0, 0],
-    points: [0, 0]
+    points: [0, 0],
+    tieBreak: false
   },
 
   pointsHistory: [],
@@ -21,7 +22,12 @@ export const useMatchStore = create((set, get) => ({
     set({
       player,
       opponent,
-      score: { sets: [0, 0], games: [0, 0], points: [0, 0] },
+      score: {
+        sets: [0, 0],
+        games: [0, 0],
+        points: [0, 0],
+        tieBreak: false
+      },
       pointsHistory: [],
       mentalTimeline: []
     }),
@@ -101,10 +107,29 @@ export const useMatchStore = create((set, get) => ({
     return avg;
   },
 
+  getFormattedPoints: () => {
+    const { score } = get();
+
+    const tennisPoints = [0, 15, 30, 40];
+    const [p1, p2] = score.points;
+
+    if (score.tieBreak) {
+      return `${p1} - ${p2}`;
+    }
+
+    if (p1 >= 3 && p2 >= 3) {
+      if (p1 === p2) return "40-40";
+      if (p1 === p2 + 1) return "AD-40";
+      if (p2 === p1 + 1) return "40-AD";
+    }
+
+    return `${tennisPoints[p1]} - ${tennisPoints[p2]}`;
+  },
+
 }));
 
 function applyPoint(score, outcome) {
-  let { points, games, sets } = score;
+  let { points, games, sets, tieBreak } = score;
 
   let p = [...points];
   let g = [...games];
@@ -113,22 +138,66 @@ function applyPoint(score, outcome) {
   const winner = outcome === "player" ? 0 : 1;
   const loser = winner === 0 ? 1 : 0;
 
-  p[winner]++;
-
-  if (p[winner] >= 4 && p[winner] - p[loser] >= 2) {
-    g[winner]++;
-    p = [0, 0];
+  // Entrata automatica nel tie-break
+  if (!tieBreak && g[0] === 6 && g[1] === 6) {
+    tieBreak = true;
   }
 
-  if (g[winner] >= 6 && g[winner] - g[loser] >= 2) {
-    s[winner]++;
-    g = [0, 0];
+  p[winner]++;
+
+  // =====================
+  // TIE BREAK
+  // =====================
+  if (tieBreak) {
+
+    if (p[winner] >= 7 && p[winner] - p[loser] >= 2) {
+
+      // Vince il set
+      s[winner]++;
+
+      // Nuovo set
+      g = [0, 0];
+      p = [0, 0];
+      tieBreak = false;
+    }
+
+    return {
+      sets: s,
+      games: g,
+      points: p,
+      tieBreak
+    };
+  }
+
+  // =====================
+  // GIOCO NORMALE
+  // =====================
+  if (p[winner] >= 4 && p[winner] - p[loser] >= 2) {
+
+    g[winner]++;
+    p = [0, 0];
+
+    // Se si arriva sul 6-6 il prossimo gioco sarà un tie-break
+    if (g[0] === 6 && g[1] === 6) {
+      tieBreak = true;
+    }
+
+    // Vittoria del set senza tie-break
+    else if (g[winner] >= 6 && g[winner] - g[loser] >= 2) {
+
+      s[winner]++;
+
+      g = [0, 0];
+      p = [0, 0];
+      tieBreak = false;
+    }
   }
 
   return {
     sets: s,
     games: g,
-    points: p
+    points: p,
+    tieBreak
   };
 }
 
@@ -136,7 +205,8 @@ function recalcFromHistory(history) {
   let score = {
     sets: [0, 0],
     games: [0, 0],
-    points: [0, 0]
+    points: [0, 0],
+    tieBreak: false
   };
 
   history.forEach((p) => {
