@@ -66,18 +66,21 @@ export default function Match() {
 
   return (
     <div className="container">
-      <h2>{player} vs {opponent}</h2>
-
-      <p>Set: {score.sets[0]} - {score.sets[1]}</p>
-      <p>Game: {score.games[0]} - {score.games[1]}</p>
-
-      {score.tieBreak && (
-        <div style={{ fontWeight: "bold", color: "orange" }}>
-          🔥 TIE-BREAK
+      <div className="match-header">
+        <div className="players">
+          {player} vs {opponent}
         </div>
-      )}
 
-      <p>Punti: {getFormattedPoints()}</p>
+        <div className="score-row">
+          <span>🎾 Set {score.sets[0]}-{score.sets[1]}</span>
+          <span>Game {score.games[0]}-{score.games[1]}</span>
+          <span>{getFormattedPoints()}</span>
+
+          {score.tieBreak && (
+            <span className="tb">🔥 TB</span>
+          )}
+        </div>
+      </div>
 
       <StatsLive />
       <MentalChart />
